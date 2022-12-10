@@ -1,0 +1,25 @@
+{
+  "name": "live-demo",
+  "version": "0.0.1",
+  "description": "Public demonstration of the Open MCT platform",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "npm run install:openmct && npm run install:tutorial",
+    "install:openmct": "cd node_modules/openmct && npm install",
+    "install:tutorial": "npm install --ignore-scripts nasa/openmct-tutorial#tutorial-updates",
+    "start": "node server.js"
+  },
+  "author": "National Aeronautics and Space Administration",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "express": "^4.15.2",
+    "express-ws": "^3.0.0",
+    "hopscotch": "^0.2.7",
+    "minimist": "^1.2.0",
+    "openmct": "github:nasa/openmct#ea77e014b8d82b04f938ec3f845ecedc5c200fa7",
+    "request": "^2.81.0",
+    "requirejs": "^2.3.3",
+    "text": "github:requirejs/text"
+  }
+}

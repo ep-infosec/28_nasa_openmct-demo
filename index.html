@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Open MCT Tutorials</title>
+    <script src="node_modules/requirejs/require.js"></script>
+    <link rel="stylesheet" type="text/css" href="res/tour.css">
+    <link rel="stylesheet" type="text/css" href="res/hopscotch.css">
+</head>
+<body>
+    <script>
+        var http;
+
+        require.config({
+            paths:{
+                "text": "node_modules/text/text",
+                "tutorials": "node_modules/openmct-tutorials",
+		"hopscotch": "node_modules/hopscotch/dist/js/hopscotch.min",
+		"http": "node_modules/openmct-tutorials/lib/http"
+           },
+           shim: {
+               "tutorials/dictionary-plugin": {
+                   exports: "DictionaryPlugin"
+               },
+               "tutorials/realtime-telemetry-plugin": {
+                   exports: "RealtimeTelemetryPlugin"
+               },
+               "tutorials/historical-telemetry-plugin": {
+                   exports: "HistoricalTelemetryPlugin",
+               }
+           }
+        });
+
+        // The 'http' library is a simple XHR library used by the tutorial telemetry adapters.
+        // Tutorial adapters require it to be available globally.
+	require (['http'], function init(h) {
+            http = h;
+        });
+
+        require([
+                "./node_modules/openmct/dist/openmct",
+                "tutorials/dictionary-plugin",
+                "tutorials/realtime-telemetry-plugin",
+                "tutorials/historical-telemetry-plugin",
+                "./scripts/demo-objects",
+                "./scripts/scaled-image",
+                "./scripts/demo-time-conductor",
+		"./scripts/demo-tour.js"
+            ],
+            function (
+                openmct,
+                DictionaryPlugin,
+                RealtimeTelemetryPlugin,
+                HistoricalTelemetryPlugin,
+                DemoObjectsPlugin,
+                ScaledImagePlugin,
+                DemoTimeConductorPlugin,
+		DemoTourPlugin
+            ) {
+                  openmct.setAssetPath("node_modules/openmct/dist");
+                  openmct.install(openmct.plugins.LocalStorage());
+                  openmct.install(openmct.plugins.Espresso());
+                  openmct.install(openmct.plugins.UTCTimeSystem());
+
+                  // Demo specific plugins
+                  openmct.install(DemoObjectsPlugin());
+                  openmct.install(ScaledImagePlugin());
+                  openmct.install(DemoTimeConductorPlugin());
+		  openmct.install(DemoTourPlugin());
+
+                  // Tutorial plugins
+		  openmct.install(DictionaryPlugin());
+                  openmct.install(RealtimeTelemetryPlugin());
+                  openmct.install(HistoricalTelemetryPlugin());
+
+                  // Other supporting plugins
+                  openmct.legacyRegistry.enable("example/msl");
+                  openmct.install(openmct.plugins.ExampleImagery());
+                  openmct.install(openmct.plugins.Conductor({
+                      menuOptions: [
+                          {
+                              timeSystem: 'utc',
+                              clock: 'local',
+                              clockOffsets: {
+                                start: -15 * 60 * 1000,
+                                end: 0
+                              }
+                          },
+                          {
+                              timeSystem: 'utc',
+                              bounds: {
+                                  start: Date.parse('2012-08-06'),
+                                  end: Date.now()
+                              }
+                          },
+                      ]
+                  }));
+
+                  openmct.install(openmct.plugins.MyItems());
+
+                  openmct.start();
+                  window.openmct = openmct;
+             }
+        );
+    </script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-76951009-1', 'auto');
+        ga('send', 'pageview', '/live_demo');
+        window.addEventListener('hashchange', function () {
+            ga('send', 'pageview', '/live_demo' + window.location.hash.slice(1));
+        });
+    </script>
+</body>
+</html>
